@@ -4,16 +4,27 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text;
 using Unity.Plastic.Newtonsoft.Json;
 using UnityEditor;
 using UnityEditor.PackageManager;
 using UnityEditor.PackageManager.Requests;
 using UnityEngine;
+using PackageInfo = UnityEditor.PackageManager.PackageInfo;
 
 namespace com.akihiro.upmeditor.editor
 {
     public class upmeditor_import : EditorWindow
     {
+        private string gitURL;
+        private string pathURL;
+        private string versionURL;
+        private string upmURL;
+
+        private Vector2 scrollPoint;
+        private bool refreshFlag = false;
+        private float refreshTime = 0.0f;
+
         private AddRequest addRequest;
         private RemoveRequest removeReauest;
         private ListRequest listRequest;
@@ -21,27 +32,81 @@ namespace com.akihiro.upmeditor.editor
 
         private void OnGUI()
         {
-            GUILayout.Label("UPM Import", EditorStyles.boldLabel);
+            minSize = new Vector2(600, 300);
 
-            if (GUILayout.Button("Open manifest.json")) EditorUtility.OpenWithDefaultApp(Application.dataPath + "/../Packages/manifest.json");
+            GUILayout.BeginHorizontal();
+            GUILayout.Label("Unity Package Manager", EditorStyles.largeLabel);
+            if (GUILayout.Button("Open manifest.json", GUILayout.Width(200))) EditorUtility.OpenWithDefaultApp(Application.dataPath + "/../Packages/manifest.json");
+            if (GUILayout.Button("Open packages-lock.json", GUILayout.Width(200))) EditorUtility.OpenWithDefaultApp(Application.dataPath + "/../Packages/packages-lock.json");
+            GUILayout.EndHorizontal();
 
-            if (GUILayout.Button("Add"))
+            GUILayout.Space(14);
+
+            GUILayout.Label("Get Unity Package Manager URL", EditorStyles.largeLabel);
+            GUILayout.BeginHorizontal();
+            GUILayout.Label("git clone URL (https or ssh) : ", GUILayout.Width(200));
+            gitURL = GUILayout.TextField(gitURL);
+            GUILayout.EndHorizontal();
+
+            GUILayout.BeginHorizontal();
+            GUILayout.Label("package.json file path : ", GUILayout.Width(200));
+            pathURL = GUILayout.TextField(pathURL);
+            GUILayout.EndHorizontal();
+
+            GUILayout.BeginHorizontal();
+            GUILayout.Label("branch or tag name : ", GUILayout.Width(200));
+            versionURL = GUILayout.TextField(versionURL);
+            GUILayout.EndHorizontal();
+
+            GUILayout.Space(5);
+            GUILayout.BeginHorizontal();
+            GUILayout.Label($"Unity Package Manager URL : ", GUILayout.Width(200));
+            upmURL = GUILayout.TextArea(UPMPathConverter.ToUPMPath(gitURL, pathURL, versionURL));
+            if (GUILayout.Button("Add", GUILayout.Width(100))) AddManifest(upmURL);
+            GUILayout.EndHorizontal();
+
+            GUILayout.Space(14);
+
+            GUILayout.BeginHorizontal();
+            GUILayout.Label("Control Unity Package Manager", EditorStyles.largeLabel);
+            GUILayout.FlexibleSpace();
+            if (GUILayout.Button("Refresh", GUILayout.Width(100))) ListManifest();
+            GUILayout.EndHorizontal();
+
+            scrollPoint = GUILayout.BeginScrollView(scrollPoint);
+            foreach (var item in packages)
             {
-                AddManifest("git+ssh://git@github.com/akihiro0105/nanoKontrol2_Unity.git?path=/Assets/com.akihiro.nanokontrol2.sdk");
+                GUILayout.BeginHorizontal();
+                GUILayout.Label(item.name, EditorStyles.label, GUILayout.Width(300));
+                GUILayout.Label(item.version, EditorStyles.label, GUILayout.Width(50));
+                GUILayout.FlexibleSpace();
+                if (GUILayout.Button("Remove", GUILayout.Width(100))) RemoveManifest(item);
+                if (GUILayout.Button("Reload", GUILayout.Width(100))) PackageLock.Reload(item.name);
+                GUILayout.EndHorizontal();
             }
-            if (GUILayout.Button("Remove"))
+            GUILayout.EndScrollView();
+
+            if (refreshFlag)
             {
-                RemoveManifest("com.akihiro.nanokontrol2.sdk");
+                refreshTime += Time.deltaTime;
+                if (refreshTime > 5.0f)
+                {
+                    refreshFlag = false;
+                    refreshTime = 0.0f;
+                    ListManifest();
+                }
             }
-            if (GUILayout.Button("List"))
-            {
-                ListManifest();
-            }
+        }
+
+        private void OnInspectorUpdate()
+        {
+            Repaint();
         }
 
         private void AddManifest(string identifier)
         {
-            addRequest=Client.Add(identifier);
+            Debug.Log("Install: " + identifier);
+            addRequest = Client.Add(identifier);
             EditorApplication.update += AddProgress;
         }
 
@@ -50,17 +115,22 @@ namespace com.akihiro.upmeditor.editor
             if (addRequest.IsCompleted)
             {
                 if (addRequest.Status == StatusCode.Success)
-                    Debug.Log("Installed: " + addRequest.Result.packageId);
+                {
+                    Debug.Log("Installed: " + addRequest.Result.name);
+                    refreshFlag = true;
+                }
                 else if (addRequest.Status >= StatusCode.Failure)
+                {
                     Debug.Log(addRequest.Error.message);
-
+                }
                 EditorApplication.update -= AddProgress;
             }
         }
 
-        private void RemoveManifest(string packageName)
+        private void RemoveManifest(PackageInfo package)
         {
-            removeReauest = Client.Remove(packageName);
+            Debug.Log("Remove: " + package.name);
+            removeReauest = Client.Remove(package.name);
             EditorApplication.update += RemoveProgress;
         }
 
@@ -69,16 +139,21 @@ namespace com.akihiro.upmeditor.editor
             if (removeReauest.IsCompleted)
             {
                 if (removeReauest.Status == StatusCode.Success)
+                {
                     Debug.Log("Removed: " + removeReauest.PackageIdOrName);
+                    refreshFlag = true;
+                }
                 else if (removeReauest.Status >= StatusCode.Failure)
+                {
                     Debug.Log(removeReauest.Error.message);
-
+                }
                 EditorApplication.update -= AddProgress;
             }
         }
 
         private void ListManifest()
         {
+            Debug.Log("Refresh List");
             listRequest = Client.List();
             EditorApplication.update += ListProgress;
         }
@@ -91,13 +166,72 @@ namespace com.akihiro.upmeditor.editor
                 {
                     packages = listRequest.Result;
                     foreach (var package in packages)
+                    {
                         Debug.Log("Package name: " + package.name);
+                    }
                 }
                 else if (listRequest.Status >= StatusCode.Failure)
+                {
                     Debug.Log(listRequest.Error.message);
+                }
 
                 EditorApplication.update -= ListProgress;
             }
+        }
+    }
+
+    public static class UPMPathConverter
+    {
+        public static string ToUPMPath(string sourceURL, string pathURL = "", string versionURL = "")
+        {
+            var source = sourceURL;
+            if (!sourceURL.Contains("git+https://") && !sourceURL.Contains("git+ssh://"))
+            {
+                if (sourceURL.Contains("git@github.com:") || sourceURL.Contains("vs-ssh.visualstudio.com:"))
+                {
+                    var index = sourceURL.IndexOf(':');
+                    var sourceBuilder = new StringBuilder(sourceURL);
+                    sourceBuilder.Replace(':', '/', index, 1);
+                    source = $"ssh://{sourceBuilder}";
+                }
+                source = $"git+{source}";
+            }
+            var path = (pathURL == "") ? "" : $"?path={pathURL}";
+            var version = (versionURL == "") ? "" : $"#{versionURL}";
+            return $"{source}{path}{version}";
+        }
+    }
+
+    public static class PackageLock
+    {
+        public static void Reload(string name)
+        {
+            var filePath = Application.dataPath + "/../Packages/packages-lock.json";
+            if (File.Exists(filePath))
+            {
+                var text = File.ReadAllText(filePath);
+                var data = JsonConvert.DeserializeObject<PackgeLock>(text);
+                var target = data.dependencies.Where(item => item.Key == name)?.FirstOrDefault();
+                if (target != null) data.dependencies.Remove(target.Value.Key);
+                var json = JsonConvert.SerializeObject(data, Formatting.Indented);
+                File.WriteAllText(filePath, json);
+                Client.Resolve();
+            }
+        }
+
+        public class PackgeLock
+        {
+            public Dictionary<string, PackgeData> dependencies { get; set; }
+        }
+
+        public class PackgeData
+        {
+            public string version { get; set; }
+            public int depth { get; set; }
+            public string source { get; set; }
+            public Dictionary<string, string> dependencies { get; set; }
+            public string hash { get; set; }
+            public string url { get; set; }
         }
     }
 }

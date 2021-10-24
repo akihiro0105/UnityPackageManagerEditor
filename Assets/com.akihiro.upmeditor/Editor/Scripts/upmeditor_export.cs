@@ -16,25 +16,23 @@ namespace com.akihiro.upmeditor.editor
         {
             GUILayout.Label("UPM Export", EditorStyles.boldLabel);
 
+            EditorGUILayout.BeginVertical();
+
+
             inputText = EditorGUILayout.TextField(inputText);
 
             if (GUILayout.Button("Init package"))
             {
-                var path = Application.dataPath + "/"+ inputText;
+                var path = Application.dataPath + "/" + inputText;
                 Directory.CreateDirectory(path);
-                File.WriteAllText(path + "/README.md", "# "+ inputText);
-                File.WriteAllText(path + "/LICENSE", "");
-                var package = new PackageJson();
-                package.name = inputText;
-                package.version = "1.0.0";
-                package.displayName = inputText;
-                package.description = inputText;
-                package.unity = "2020.3";
-                var data=JsonUtility.ToJson(package, true);
+                File.WriteAllText(path + "/README.md", $"# {inputText}");
+                var data = JsonUtility.ToJson(new PackageJson(inputText), true);
                 File.WriteAllText(path + "/package.json", data);
 
                 AssetDatabase.Refresh();
             }
+
+            EditorGUILayout.EndVertical();
         }
     }
 
@@ -46,6 +44,14 @@ namespace com.akihiro.upmeditor.editor
         public string displayName;
         public string description;
         public string unity;
+        public PackageJson(string name)
+        {
+            this.name = name;
+            version = "0.0.1";
+            displayName = name;
+            description = name;
+            unity = "2020.3";
+        }
     }
 }
 #endif
