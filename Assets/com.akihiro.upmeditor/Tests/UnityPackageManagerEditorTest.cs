@@ -9,14 +9,14 @@ namespace com.akihiro.upmeditor.test
 {
     public class UnityPackageManagerEditorTest
     {
-        private readonly static string githubPathURL = "/Assets/com.akihiro.nanokontrol2.sdk";
+        private readonly static string githubPathURL = "/Assets/com.akihiro.upmeditor/";
         private readonly static string devopsPathURL = "/Assets/com.TestPackage";
 
         [Test]
         public void GitHubHTTPSCloneURLToUPMURL()
         {
-            var sourceURL = "https://github.com/akihiro0105/nanoKontrol2_Unity.git";
-            var targetURL = "git+https://github.com/akihiro0105/nanoKontrol2_Unity.git?path=/Assets/com.akihiro.nanokontrol2.sdk";
+            var sourceURL = "https://github.com/akihiro0105/UnityPackageManagerEditor.git";
+            var targetURL = "git+https://github.com/akihiro0105/UnityPackageManagerEditor.git?path=/Assets/com.akihiro.upmeditor/";
 
             var upmPath = UPMPathConverter.ToUPMPath(sourceURL, githubPathURL);
             Assert.AreEqual(upmPath, targetURL);
@@ -25,8 +25,8 @@ namespace com.akihiro.upmeditor.test
         [Test]
         public void GitHubSSHCloneURLToUPMURL()
         {
-            var sourceURL = "git@github.com:akihiro0105/nanoKontrol2_Unity.git";
-            var targetURL = "git+ssh://git@github.com/akihiro0105/nanoKontrol2_Unity.git?path=/Assets/com.akihiro.nanokontrol2.sdk";
+            var sourceURL = "git@github.com:akihiro0105/UnityPackageManagerEditor.git";
+            var targetURL = "git+ssh://git@github.com/akihiro0105/UnityPackageManagerEditor.git?path=/Assets/com.akihiro.upmeditor/";
 
             var upmPath = UPMPathConverter.ToUPMPath(sourceURL, githubPathURL);
             Assert.AreEqual(upmPath, targetURL);
@@ -55,8 +55,8 @@ namespace com.akihiro.upmeditor.test
         [Test]
         public void UPMURLToUPMURL()
         {
-            var sourceURL = "git+https://github.com/akihiro0105/nanoKontrol2_Unity?path=/Assets/com.akihiro.nanokontrol2.sdk";
-            var targetURL = "git+https://github.com/akihiro0105/nanoKontrol2_Unity?path=/Assets/com.akihiro.nanokontrol2.sdk";
+            var sourceURL = "git+https://github.com/akihiro0105/UnityPackageManagerEditor.git?path=/Assets/com.akihiro.upmeditor/";
+            var targetURL = "git+https://github.com/akihiro0105/UnityPackageManagerEditor.git?path=/Assets/com.akihiro.upmeditor/";
 
             var upmPath = UPMPathConverter.ToUPMPath(sourceURL);
             Assert.AreEqual(upmPath, targetURL);
