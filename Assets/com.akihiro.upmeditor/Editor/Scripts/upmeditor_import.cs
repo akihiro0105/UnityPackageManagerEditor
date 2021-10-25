@@ -16,24 +16,19 @@ namespace com.akihiro.upmeditor.editor
 {
     public class upmeditor_import : EditorWindow
     {
-        private string gitURL="";
-        private string pathURL="";
-        private string versionURL="";
-        private string upmURL="";
+        private string gitURL = "";
+        private string pathURL = "";
+        private string versionURL = "";
+        private string upmURL = "";
 
-        private Vector2 scrollPoint=Vector2.zero;
+        private Vector2 scrollPoint = Vector2.zero;
         private bool refreshFlag = false;
         private float refreshTime = 0.0f;
 
         private AddRequest addRequest;
         private RemoveRequest removeReauest;
         private ListRequest listRequest;
-        private PackageCollection packages=null;
-
-        private void Awake()
-        {
-            ListManifest();
-        }
+        private PackageCollection packages = null;
 
         private void OnGUI()
         {
@@ -45,19 +40,15 @@ namespace com.akihiro.upmeditor.editor
             if (GUILayout.Button("Open packages-lock.json", GUILayout.Width(200))) EditorUtility.OpenWithDefaultApp(Application.dataPath + "/../Packages/packages-lock.json");
             GUILayout.EndHorizontal();
 
-            GUILayout.Space(14);
-
             GUILayout.Label("Get Unity Package Manager URL", EditorStyles.largeLabel);
             GUILayout.BeginHorizontal();
             GUILayout.Label("git clone URL (https or ssh) : ", GUILayout.Width(200));
             gitURL = GUILayout.TextField(gitURL);
             GUILayout.EndHorizontal();
-
             GUILayout.BeginHorizontal();
             GUILayout.Label("package.json file path : ", GUILayout.Width(200));
             pathURL = GUILayout.TextField(pathURL);
             GUILayout.EndHorizontal();
-
             GUILayout.BeginHorizontal();
             GUILayout.Label("branch, tag or commit name : ", GUILayout.Width(200));
             versionURL = GUILayout.TextField(versionURL);
@@ -71,24 +62,22 @@ namespace com.akihiro.upmeditor.editor
             GUILayout.EndHorizontal();
 
             GUILayout.Space(14);
-
             GUILayout.BeginHorizontal();
             GUILayout.Label("Control Unity Package Manager", EditorStyles.largeLabel);
             GUILayout.FlexibleSpace();
             if (GUILayout.Button("Refresh", GUILayout.Width(100))) ListManifest();
             GUILayout.EndHorizontal();
-
             scrollPoint = GUILayout.BeginScrollView(scrollPoint);
-            if(packages!=null)foreach (var item in packages)
-            {
-                GUILayout.BeginHorizontal();
-                GUILayout.Label(item.name, EditorStyles.label, GUILayout.Width(300));
-                GUILayout.Label(item.version, EditorStyles.label, GUILayout.Width(50));
-                GUILayout.FlexibleSpace();
-                if (GUILayout.Button("Remove", GUILayout.Width(100))) RemoveManifest(item);
-                if (GUILayout.Button("Reload", GUILayout.Width(100))) PackageLock.Reload(item.name);
-                GUILayout.EndHorizontal();
-            }
+            if (packages != null) foreach (var item in packages)
+                {
+                    GUILayout.BeginHorizontal();
+                    GUILayout.Label(item.name, EditorStyles.label, GUILayout.Width(300));
+                    GUILayout.Label(item.version, EditorStyles.label, GUILayout.Width(50));
+                    GUILayout.FlexibleSpace();
+                    if (GUILayout.Button("Remove", GUILayout.Width(100))) RemoveManifest(item);
+                    if (GUILayout.Button("Reload", GUILayout.Width(100))) PackageLock.Reload(item.name);
+                    GUILayout.EndHorizontal();
+                }
             GUILayout.EndScrollView();
 
             if (refreshFlag)
@@ -103,10 +92,9 @@ namespace com.akihiro.upmeditor.editor
             }
         }
 
-        private void OnInspectorUpdate()
-        {
-            Repaint();
-        }
+        private void Awake() => ListManifest();
+
+        private void OnInspectorUpdate() => Repaint();
 
         private void AddManifest(string identifier)
         {
@@ -117,19 +105,14 @@ namespace com.akihiro.upmeditor.editor
 
         private void AddProgress()
         {
-            if (addRequest.IsCompleted)
+            if (!addRequest.IsCompleted) return;
+            if (addRequest.Status == StatusCode.Success)
             {
-                if (addRequest.Status == StatusCode.Success)
-                {
-                    Debug.Log("Installed: " + addRequest.Result.name);
-                    refreshFlag = true;
-                }
-                else if (addRequest.Status >= StatusCode.Failure)
-                {
-                    Debug.Log(addRequest.Error.message);
-                }
-                EditorApplication.update -= AddProgress;
+                Debug.Log("Installed: " + addRequest.Result.name);
+                refreshFlag = true;
             }
+            else if (addRequest.Status >= StatusCode.Failure) Debug.LogError(addRequest.Error.message);
+            EditorApplication.update -= AddProgress;
         }
 
         private void RemoveManifest(PackageInfo package)
@@ -141,19 +124,14 @@ namespace com.akihiro.upmeditor.editor
 
         private void RemoveProgress()
         {
-            if (removeReauest.IsCompleted)
+            if (!removeReauest.IsCompleted) return;
+            if (removeReauest.Status == StatusCode.Success)
             {
-                if (removeReauest.Status == StatusCode.Success)
-                {
-                    Debug.Log("Removed: " + removeReauest.PackageIdOrName);
-                    refreshFlag = true;
-                }
-                else if (removeReauest.Status >= StatusCode.Failure)
-                {
-                    Debug.Log(removeReauest.Error.message);
-                }
-                EditorApplication.update -= AddProgress;
+                Debug.Log("Removed: " + removeReauest.PackageIdOrName);
+                refreshFlag = true;
             }
+            else if (removeReauest.Status >= StatusCode.Failure) Debug.LogError(removeReauest.Error.message);
+            EditorApplication.update -= AddProgress;
         }
 
         private void ListManifest()
@@ -165,23 +143,14 @@ namespace com.akihiro.upmeditor.editor
 
         private void ListProgress()
         {
-            if (listRequest.IsCompleted)
+            if (!listRequest.IsCompleted) return;
+            if (listRequest.Status == StatusCode.Success)
             {
-                if (listRequest.Status == StatusCode.Success)
-                {
-                    packages = listRequest.Result;
-                    foreach (var package in packages)
-                    {
-                        Debug.Log("Package name: " + package.name);
-                    }
-                }
-                else if (listRequest.Status >= StatusCode.Failure)
-                {
-                    Debug.Log(listRequest.Error.message);
-                }
-
-                EditorApplication.update -= ListProgress;
+                packages = listRequest.Result;
+                foreach (var package in packages) Debug.Log("Package name: " + package.name);
             }
+            else if (listRequest.Status >= StatusCode.Failure) Debug.LogError(listRequest.Error.message);
+            EditorApplication.update -= ListProgress;
         }
     }
 
@@ -224,12 +193,12 @@ namespace com.akihiro.upmeditor.editor
             }
         }
 
-        public class PackgeLock
+        private class PackgeLock
         {
             public Dictionary<string, PackgeData> dependencies { get; set; }
         }
 
-        public class PackgeData
+        private class PackgeData
         {
             public string version { get; set; }
             public int depth { get; set; }
