@@ -189,7 +189,9 @@ namespace com.akihiro.upmeditor.editor
                 if (target != null) data.dependencies.Remove(target.Value.Key);
                 var json = JsonConvert.SerializeObject(data, Formatting.Indented);
                 File.WriteAllText(filePath, json);
+#if UNITY_2020_1_OR_NEWER
                 Client.Resolve();
+#endif
             }
         }
 
