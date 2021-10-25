@@ -16,19 +16,24 @@ namespace com.akihiro.upmeditor.editor
 {
     public class upmeditor_import : EditorWindow
     {
-        private string gitURL;
-        private string pathURL;
-        private string versionURL;
-        private string upmURL;
+        private string gitURL="";
+        private string pathURL="";
+        private string versionURL="";
+        private string upmURL="";
 
-        private Vector2 scrollPoint;
+        private Vector2 scrollPoint=Vector2.zero;
         private bool refreshFlag = false;
         private float refreshTime = 0.0f;
 
         private AddRequest addRequest;
         private RemoveRequest removeReauest;
         private ListRequest listRequest;
-        private PackageCollection packages;
+        private PackageCollection packages=null;
+
+        private void Awake()
+        {
+            ListManifest();
+        }
 
         private void OnGUI()
         {
@@ -54,7 +59,7 @@ namespace com.akihiro.upmeditor.editor
             GUILayout.EndHorizontal();
 
             GUILayout.BeginHorizontal();
-            GUILayout.Label("branch or tag name : ", GUILayout.Width(200));
+            GUILayout.Label("branch, tag or commit name : ", GUILayout.Width(200));
             versionURL = GUILayout.TextField(versionURL);
             GUILayout.EndHorizontal();
 
@@ -74,7 +79,7 @@ namespace com.akihiro.upmeditor.editor
             GUILayout.EndHorizontal();
 
             scrollPoint = GUILayout.BeginScrollView(scrollPoint);
-            foreach (var item in packages)
+            if(packages!=null)foreach (var item in packages)
             {
                 GUILayout.BeginHorizontal();
                 GUILayout.Label(item.name, EditorStyles.label, GUILayout.Width(300));
