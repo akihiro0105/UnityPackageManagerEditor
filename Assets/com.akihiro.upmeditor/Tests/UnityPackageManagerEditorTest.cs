@@ -13,7 +13,7 @@ namespace com.akihiro.upmeditor.test
         private readonly static string devopsPathURL = "/Assets/com.TestPackage";
 
         [Test]
-        public void GitHubのHTTPSのCloneURLからUPMパスが取得できる()
+        public void GitHubHTTPSCloneURLToUPMURL()
         {
             var sourceURL = "https://github.com/akihiro0105/nanoKontrol2_Unity.git";
             var targetURL = "git+https://github.com/akihiro0105/nanoKontrol2_Unity.git?path=/Assets/com.akihiro.nanokontrol2.sdk";
@@ -23,7 +23,7 @@ namespace com.akihiro.upmeditor.test
         }
 
         [Test]
-        public void GitHubのSSHのCloneURLからUPMパスが取得できる()
+        public void GitHubSSHCloneURLToUPMURL()
         {
             var sourceURL = "git@github.com:akihiro0105/nanoKontrol2_Unity.git";
             var targetURL = "git+ssh://git@github.com/akihiro0105/nanoKontrol2_Unity.git?path=/Assets/com.akihiro.nanokontrol2.sdk";
@@ -33,7 +33,7 @@ namespace com.akihiro.upmeditor.test
         }
 
         [Test]
-        public void DevopsのHTTPSのCloneURLからUPMパスが取得できる()
+        public void DevopsHTTPSCloneURLToUPMURL()
         {
             var sourceURL = "https://hololab.visualstudio.com/akihiro_sandbox/_git/UPMTest";
             var targetURL = "git+https://hololab.visualstudio.com/akihiro_sandbox/_git/UPMTest?path=/Assets/com.TestPackage";
@@ -43,7 +43,7 @@ namespace com.akihiro.upmeditor.test
         }
 
         [Test]
-        public void DevopsのSSHのCloneURLからUPMパスが取得できる()
+        public void DevopsSSHCloneURLToUPMURL()
         {
             var sourceURL = "hololab@vs-ssh.visualstudio.com:v3/hololab/akihiro_sandbox/UPMTest";
             var targetURL = "git+ssh://hololab@vs-ssh.visualstudio.com/v3/hololab/akihiro_sandbox/UPMTest?path=/Assets/com.TestPackage";
@@ -53,7 +53,7 @@ namespace com.akihiro.upmeditor.test
         }
 
         [Test]
-        public void UPMパスからUPMパスが取得できる()
+        public void UPMURLToUPMURL()
         {
             var sourceURL = "git+https://github.com/akihiro0105/nanoKontrol2_Unity?path=/Assets/com.akihiro.nanokontrol2.sdk";
             var targetURL = "git+https://github.com/akihiro0105/nanoKontrol2_Unity?path=/Assets/com.akihiro.nanokontrol2.sdk";
