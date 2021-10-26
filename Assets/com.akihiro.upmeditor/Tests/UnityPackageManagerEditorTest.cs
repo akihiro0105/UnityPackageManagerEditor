@@ -13,7 +13,7 @@ namespace com.akihiro.upmeditor.test
         private readonly static string devopsPathURL = "/Assets/com.TestPackage";
 
         [Test]
-        public void GitHubHTTPSCloneURLToUPMURL()
+        public void GitHubのHTTPSのCloneURLからUPMURLに変換()
         {
             var sourceURL = "https://github.com/akihiro0105/UnityPackageManagerEditor.git";
             var targetURL = "git+https://github.com/akihiro0105/UnityPackageManagerEditor.git?path=/Assets/com.akihiro.upmeditor/";
@@ -23,7 +23,7 @@ namespace com.akihiro.upmeditor.test
         }
 
         [Test]
-        public void GitHubSSHCloneURLToUPMURL()
+        public void GitHubのSSHのCloneURLからUPMURLに変換()
         {
             var sourceURL = "git@github.com:akihiro0105/UnityPackageManagerEditor.git";
             var targetURL = "git+ssh://git@github.com/akihiro0105/UnityPackageManagerEditor.git?path=/Assets/com.akihiro.upmeditor/";
@@ -33,7 +33,7 @@ namespace com.akihiro.upmeditor.test
         }
 
         [Test]
-        public void DevopsHTTPSCloneURLToUPMURL()
+        public void AzureDevOpsのHTTPSのCloneURLからUPMURLに変換()
         {
             var sourceURL = "https://hololab.visualstudio.com/akihiro_sandbox/_git/UPMTest";
             var targetURL = "git+https://hololab.visualstudio.com/akihiro_sandbox/_git/UPMTest?path=/Assets/com.TestPackage";
@@ -43,7 +43,7 @@ namespace com.akihiro.upmeditor.test
         }
 
         [Test]
-        public void DevopsSSHCloneURLToUPMURL()
+        public void AzureDevOpsのSSHのCloneURLからUPMURLに変換()
         {
             var sourceURL = "hololab@vs-ssh.visualstudio.com:v3/hololab/akihiro_sandbox/UPMTest";
             var targetURL = "git+ssh://hololab@vs-ssh.visualstudio.com/v3/hololab/akihiro_sandbox/UPMTest?path=/Assets/com.TestPackage";
