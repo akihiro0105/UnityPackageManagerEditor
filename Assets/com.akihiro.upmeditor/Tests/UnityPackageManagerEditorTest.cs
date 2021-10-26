@@ -53,7 +53,7 @@ namespace com.akihiro.upmeditor.test
         }
 
         [Test]
-        public void UPMURLToUPMURL()
+        public void UPMURLからUPMURLに変換()
         {
             var sourceURL = "git+https://github.com/akihiro0105/UnityPackageManagerEditor.git?path=/Assets/com.akihiro.upmeditor/";
             var targetURL = "git+https://github.com/akihiro0105/UnityPackageManagerEditor.git?path=/Assets/com.akihiro.upmeditor/";
