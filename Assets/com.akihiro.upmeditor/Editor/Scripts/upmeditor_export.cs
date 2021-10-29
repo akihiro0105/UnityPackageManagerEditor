@@ -42,6 +42,7 @@ namespace com.akihiro.upmeditor.editor
         {
             var path = Application.dataPath + "/" + name;
             Directory.CreateDirectory(path);
+            Directory.CreateDirectory(path + "/Sample");
             if (readmeToggle)
             {
                 File.WriteAllText(path + "/README.md", $"# {name}");
@@ -68,6 +69,7 @@ namespace com.akihiro.upmeditor.editor
         public string displayName = "";
         public string description = "";
         public string unity = "";
+        public Sample[] samples = new Sample[1];
         public PackageJson(string name)
         {
             this.name = name;
@@ -76,7 +78,16 @@ namespace com.akihiro.upmeditor.editor
             description = name;
             var unityVersion = Application.unityVersion.Split('.');
             unity = $"{unityVersion[0]}.{unityVersion[1]}";
+            samples[0] = new Sample() { displayName = "Sample", description = "Sample", path = "Sample" };
         }
+    }
+
+    [Serializable]
+    public class Sample
+    {
+        public string displayName = "";
+        public string description = "";
+        public string path = "";
     }
 
     [Serializable]
