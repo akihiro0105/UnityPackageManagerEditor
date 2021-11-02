@@ -74,8 +74,9 @@ namespace com.akihiro.upmeditor.editor
                     GUILayout.Label(item.name, EditorStyles.label, GUILayout.Width(300));
                     GUILayout.Label(item.version, EditorStyles.label, GUILayout.Width(50));
                     GUILayout.FlexibleSpace();
-                    if (GUILayout.Button("Remove", GUILayout.Width(100))) RemoveManifest(item);
-                    if (GUILayout.Button("Reload", GUILayout.Width(100))) PackageLock.Reload(item.name);
+                    if (GUILayout.Button("Embed", GUILayout.Width(80))) Client.Embed(item.name);
+                    if (GUILayout.Button("Remove", GUILayout.Width(80))) RemoveManifest(item);
+                    if (GUILayout.Button("Reload", GUILayout.Width(80))) PackageLock.Reload(item.name);
                     GUILayout.EndHorizontal();
                 }
             GUILayout.EndScrollView();

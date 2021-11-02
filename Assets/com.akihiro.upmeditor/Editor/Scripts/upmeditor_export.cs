@@ -14,6 +14,7 @@ namespace com.akihiro.upmeditor.editor
         private bool readmeToggle = true;
         private bool assemblyToggle = true;
         private bool packageJsonToggle = true;
+        private bool sampleToggle = true;
 
         private void OnGUI()
         {
@@ -30,6 +31,7 @@ namespace com.akihiro.upmeditor.editor
             packageJsonToggle = GUILayout.Toggle(packageJsonToggle, "/package.json");
             readmeToggle = GUILayout.Toggle(readmeToggle, "/README.md");
             assemblyToggle = GUILayout.Toggle(assemblyToggle, $"/{packageNameText }.asmdef");
+            sampleToggle = GUILayout.Toggle(sampleToggle, $"/Sample");
             GUILayout.EndHorizontal();
 
             GUILayout.BeginHorizontal();
@@ -42,20 +44,21 @@ namespace com.akihiro.upmeditor.editor
         {
             var path = Application.dataPath + "/" + name;
             Directory.CreateDirectory(path);
-            Directory.CreateDirectory(path + "/Sample");
+            if (sampleToggle)
+            {
+                Directory.CreateDirectory(path + "/Samples");
+            }
             if (readmeToggle)
             {
                 File.WriteAllText(path + "/README.md", $"# {name}");
             }
             if (assemblyToggle)
             {
-                var assembly = JsonUtility.ToJson(new AssemblyDefinitionJson(name), true);
-                File.WriteAllText(path + $"/{name}.asmdef", assembly);
+                File.WriteAllText(path + $"/{name}.asmdef", JsonUtility.ToJson(new AssemblyDefinitionJson(name), true));
             }
             if (packageJsonToggle)
             {
-                var data = JsonUtility.ToJson(new PackageJson(name), true);
-                File.WriteAllText(path + "/package.json", data);
+                File.WriteAllText(path + "/package.json", JsonUtility.ToJson(new PackageJson(name, sampleToggle), true));
             }
             AssetDatabase.Refresh();
         }
@@ -69,8 +72,8 @@ namespace com.akihiro.upmeditor.editor
         public string displayName = "";
         public string description = "";
         public string unity = "";
-        public Sample[] samples = new Sample[1];
-        public PackageJson(string name)
+        public Sample[] samples = new Sample[0];
+        public PackageJson(string name, bool isSample)
         {
             this.name = name;
             version = "1.0.0";
@@ -78,16 +81,17 @@ namespace com.akihiro.upmeditor.editor
             description = name;
             var unityVersion = Application.unityVersion.Split('.');
             unity = $"{unityVersion[0]}.{unityVersion[1]}";
-            samples[0] = new Sample() { displayName = "Sample", description = "Sample", path = "Sample" };
+            if (isSample) samples = new Sample[] { new Sample("Samples") };
         }
     }
 
     [Serializable]
     public class Sample
     {
-        public string displayName = "";
-        public string description = "";
+        public string displayName = "Sample";
+        public string description = "Sample";
         public string path = "";
+        public Sample(string path) => this.path = path;
     }
 
     [Serializable]
@@ -105,10 +109,7 @@ namespace com.akihiro.upmeditor.editor
         public string[] defineConstraints = new string[0];
         public string[] versionDefines = new string[0];
         public bool noEngineReferences = false;
-        public AssemblyDefinitionJson(string name)
-        {
-            this.name = name;
-        }
+        public AssemblyDefinitionJson(string name) => this.name = name;
     }
 }
 #endif
