@@ -5,12 +5,16 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
-using Unity.Plastic.Newtonsoft.Json;
 using UnityEditor;
 using UnityEditor.PackageManager;
 using UnityEditor.PackageManager.Requests;
 using UnityEngine;
 using PackageInfo = UnityEditor.PackageManager.PackageInfo;
+#if NEWTONSOFT_JSON
+using Unity.Plastic.Newtonsoft.Json;
+#else
+using Unity.Plastic.Newtonsoft.Json;
+#endif
 
 namespace com.akihiro.upmeditor.editor
 {

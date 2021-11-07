@@ -1,6 +1,5 @@
 {
     "name": "com.akihiro.upmeditor.Editor",
-    "rootNamespace": "",
     "references": [],
     "includePlatforms": [
         "Editor"
@@ -11,6 +10,17 @@
     "precompiledReferences": [],
     "autoReferenced": true,
     "defineConstraints": [],
-    "versionDefines": [],
+    "versionDefines": [
+        {
+            "name": "com.unity.collab-proxy",
+            "expression": "",
+            "define": "NEWTONSOFT_JSON"
+        },
+        {
+            "name": "com.unity.nuget.newtonsoft-json",
+            "expression": "",
+            "define": "NEWTONSOFT_JSON"
+        }
+    ],
     "noEngineReferences": false
 }
