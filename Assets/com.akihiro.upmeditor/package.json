@@ -1,7 +1,12 @@
 {
-    "name": "com.akihiro.upmeditor",
-    "version": "1.0.3",
-    "displayName": "com.akihiro.upmeditor",
-    "description": "com.akihiro.upmeditor",
-    "unity": "2020.3"
+  "name": "com.akihiro.upmeditor",
+  "version": "1.0.4",
+  "displayName": "com.akihiro.upmeditor",
+  "description": "If Unity 2019.4.28f1 or less, install `JSON .NET For Unity` in Unity Asset Store.",
+  "unity": "2020.3",
+  "author": {
+    "name": "akihiro01051",
+    "email": "ueyama0105@gmail.com",
+    "url": "https://twitter.com/akihiro01051"
+  }
 }
