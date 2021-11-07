@@ -3,6 +3,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using System.Text.RegularExpressions;
 using UnityEditor;
 using UnityEngine;
 
@@ -15,12 +16,14 @@ namespace com.akihiro.upmeditor.editor
         private bool assemblyToggle = true;
         private bool packageJsonToggle = true;
         private bool sampleToggle = true;
+        private string errorLogText = "";
 
         private void OnGUI()
         {
-            minSize = new Vector2(400, 100);
+            minSize = new Vector2(450, 150);
 
             GUILayout.Label("Unity Package Manager", EditorStyles.largeLabel);
+            GUILayout.Label("50文字以下，小文字，数字，ハイフン (-)，アンダースコア (_)，ピリオド (.) のみ使用可能");
 
             GUILayout.BeginHorizontal();
             GUILayout.Label("package name : ", GUILayout.Width(150));
@@ -38,10 +41,30 @@ namespace com.akihiro.upmeditor.editor
             GUILayout.FlexibleSpace();
             if (GUILayout.Button("Create package", GUILayout.Width(100))) createPackageDirectory(packageNameText);
             GUILayout.EndHorizontal();
+
+            var redText = new GUIStyle();
+            redText.normal.textColor = Color.red;
+            GUILayout.Label(errorLogText, redText);
         }
 
         private void createPackageDirectory(string name)
         {
+            errorLogText = "";
+            if (name == "")
+            {
+                errorLogText = "パッケージ名を入力してください";
+                return;
+            }
+            if (!name.Equals(Regex.Replace(name, @"[^a-z0-9_.\-]", "")))
+            {
+                errorLogText = "パッケージ名には小文字，数字，ハイフン (-)，アンダースコア (_)，ピリオド (.) のみ使用可能です";
+                return;
+            }
+            if (name.Length > 50)
+            {
+                errorLogText = "パッケージ名は50文字以下にしてください";
+                return;
+            }
             var path = Application.dataPath + "/" + name;
             Directory.CreateDirectory(path);
             if (sampleToggle)
