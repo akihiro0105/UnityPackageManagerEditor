@@ -10,10 +10,10 @@ using UnityEditor.PackageManager;
 using UnityEditor.PackageManager.Requests;
 using UnityEngine;
 using PackageInfo = UnityEditor.PackageManager.PackageInfo;
-#if NEWTONSOFT_JSON
+#if COLLAB_NEWTONSOFT_JSON
 using Unity.Plastic.Newtonsoft.Json;
 #else
-using Unity.Plastic.Newtonsoft.Json;
+using Newtonsoft.Json;
 #endif
 
 namespace com.akihiro.upmeditor.editor

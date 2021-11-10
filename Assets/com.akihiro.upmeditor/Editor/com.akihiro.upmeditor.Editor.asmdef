@@ -13,13 +13,8 @@
     "versionDefines": [
         {
             "name": "com.unity.collab-proxy",
-            "expression": "",
-            "define": "NEWTONSOFT_JSON"
-        },
-        {
-            "name": "com.unity.nuget.newtonsoft-json",
-            "expression": "",
-            "define": "NEWTONSOFT_JSON"
+            "expression": "1.6",
+            "define": "COLLAB_NEWTONSOFT_JSON"
         }
     ],
     "noEngineReferences": false
