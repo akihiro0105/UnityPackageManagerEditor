@@ -73,7 +73,9 @@ namespace com.akihiro.upmeditor.editor
             }
             if (readmeToggle)
             {
-                File.WriteAllText(path + "/README.md", $"# {name}");
+                var doc = path + "/Documentation";
+                Directory.CreateDirectory(doc);
+                File.WriteAllText(doc + "/README.md", $"# {name}");
             }
             if (assemblyToggle)
             {
