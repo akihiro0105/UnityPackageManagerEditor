@@ -1,5 +1,6 @@
 {
     "name": "com.akihiro.upmeditor.Editor",
+    "rootNamespace": "",
     "references": [],
     "includePlatforms": [
         "Editor"
@@ -10,12 +11,6 @@
     "precompiledReferences": [],
     "autoReferenced": true,
     "defineConstraints": [],
-    "versionDefines": [
-        {
-            "name": "com.unity.collab-proxy",
-            "expression": "1.6",
-            "define": "COLLAB_NEWTONSOFT_JSON"
-        }
-    ],
+    "versionDefines": [],
     "noEngineReferences": false
 }

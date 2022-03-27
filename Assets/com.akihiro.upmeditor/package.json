@@ -2,11 +2,14 @@
   "name": "com.akihiro.upmeditor",
   "version": "1.0.4",
   "displayName": "com.akihiro.upmeditor",
-  "description": "If Unity 2019.4.28f1 or less, install `JSON .NET For Unity` in Unity Asset Store.\n https://github.com/jilleJr/Newtonsoft.Json-for-Unity",
+  "description": "",
   "unity": "2020.3",
   "author": {
     "name": "akihiro01051",
     "email": "ueyama0105@gmail.com",
     "url": "https://twitter.com/akihiro01051"
+  },
+  "dependencies": {
+    "com.unity.nuget.newtonsoft-json": "3.0.1"
   }
 }
